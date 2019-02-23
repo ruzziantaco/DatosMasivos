@@ -67,7 +67,7 @@ res4: Int = 20
 //-----Pregunta 4
 
 scala> def balance(list:List[Int]): Boolean={
-| var pimera=0
+| var primera=0
 | var segunda=0
 | segunda=list.sum
 | for(i<-Range(0,list.length)){
