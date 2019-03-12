@@ -23,7 +23,6 @@ df2.select("HV Ratio").show()
 
 //8
 df.select(max("High")).show()
-df.groupBy($"High".desc).show()
 
 //9
 print("El csv es una muestra del precio al que estaban las acciones en la bolsa de valores de la compania Netllix, la columna Close representa el precio con el que cerro el valor por accion de Netflix de ese dia.")
