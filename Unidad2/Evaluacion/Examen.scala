@@ -20,13 +20,13 @@ val label = new StringIndexer().setInputCol("c4").setOutputCol("label")
 val assembler = new VectorAssembler().setInputCols(Array("c0", "c1", "c2", "c3")).setOutputCol("features")
 
 //Se separa los datos en dos grupos, uno para entrenar y el otro para prueba desde nuestro df
-val splits = dfstruct.randomSplit(Array(0.6, 0.4), seed = 1234L)
+val splits = dfstruct.randomSplit(Array(0.7, 0.3), seed = 1234L)
 val train = splits(0) //entrenar
 val test = splits(1) //prueba
 
 //Especificamos las capas de nuestra red neuronal
 //4 de entrada, dos capas internas, una de 5, otra de 4 neuronas y 3 de salida
-val layers = Array[Int](4, 5, 4, 3)
+val layers = Array[Int](4, 7, 6, 3)
 
 //Creamos el entrenador y especificamos los parametros
 //.setLayers es para cargar las capas de nuestra red neuronal
@@ -39,10 +39,10 @@ val pipe = new Pipeline().setStages(Array(label,assembler,trainer))
 val model = pipe.fit(train)
 
 //Calculamos la exactitud en el conjunto test
-val result = model.transform(test)
+val res = model.transform(test)
 //Mostramos el resultado
-result.show()
-val predictionAndLabels = result.select("prediction", "label")
+res.show()
+val predictionAndLabels = res.select("prediction", "label")
 val evaluator = new MulticlassClassificationEvaluator().setMetricName("accuracy")
-//Imprimimos los resultados de exactitud
+//Imprimimos los resultados de exactitud utilizando un evaluador multiclase
 println(s"Test set accuracy = ${evaluator.evaluate(predictionAndLabels)}")
