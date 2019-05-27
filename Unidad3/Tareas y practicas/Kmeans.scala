@@ -13,7 +13,7 @@ val spark = SparkSession.builder().getOrCreate()
 val dataset = spark.read.option("header","true").option("inferSchema","true").csv("Wholesale customers data.csv")
 
 //Selecionamos las columnas que vamos a entrenar
-val feature_data = df.select($"Fresh", $"Milk", $"Grocery", $"Frozen", $"Detergents_Paper", $"Delicassen")
+val feature_data = dataset.select($"Fresh", $"Milk", $"Grocery", $"Frozen", $"Detergents_Paper", $"Delicassen")
 val assembler = new VectorAssembler().setInputCols(Array("Fresh", "Milk", "Grocery", "Frozen", "Detergents_Paper", "Delicassen")).setOutputCol("features")
 
 //Entrenamos la data que colocamos en el vectorassembler
