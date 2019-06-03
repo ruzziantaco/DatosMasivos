@@ -12,7 +12,7 @@ import org.apache.spark.ml.classification.LinearSVC
 import org.apache.spark.ml.classification.LogisticRegression
 import org.apache.spark.ml.classification.MultilayerPerceptronClassifier
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
-
+import org.apache.log4j._
 //Quita los warnings
 Logger.getLogger("org").setLevel(Level.ERROR)
 
@@ -21,20 +21,20 @@ val spark = SparkSession.builder().getOrCreate()
 val df = spark.read.option("header","true").option("inferSchema","true").option("delimiter",";").format("csv").load("bank-full.csv")
 //Desblegamos los tipos de datos.
 df.printSchema()
-df.show()
+df.show(1)
 
 //Cambiamos la columna y por una con datos binarios.
 val change1 = df.withColumn("y",when(col("y").equalTo("yes"),1).otherwise(col("y")))
 val change2 = change1.withColumn("y",when(col("y").equalTo("no"),2).otherwise(col("y")))
 val newcolumn = change2.withColumn("y",'y.cast("Int"))
 //Desplegamos la nueva columna
-newcolumn.show()
+newcolumn.show(1)
 
 //Generamos la tabla features
 val assembler = new VectorAssembler().setInputCols(Array("balance","day","duration","pdays","previous")).setOutputCol("features")
 val fea = assembler.transform(newcolumn)
 //Mostramos la nueva columna
-fea.show()
+fea.show(1)
 //Cambiamos la columna y a la columna label
 val cambio = fea.withColumnRenamed("y", "label")
 val feat = cambio.select("label","features")

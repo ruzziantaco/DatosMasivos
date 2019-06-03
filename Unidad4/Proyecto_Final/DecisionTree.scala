@@ -17,7 +17,7 @@ import org.apache.spark.ml.classification.DecisionTreeClassifier
 import org.apache.spark.ml.feature.IndexToString
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
 import org.apache.spark.ml.classification.DecisionTreeClassificationModel
-
+import org.apache.log4j._
 //Quita los warnings
 Logger.getLogger("org").setLevel(Level.ERROR)
 
@@ -26,25 +26,25 @@ val spark = SparkSession.builder().getOrCreate()
 val df = spark.read.option("header","true").option("inferSchema","true").option("delimiter",";").format("csv").load("bank-full.csv")
 //Desblegamos los tipos de datos.
 df.printSchema()
-df.show()
+df.show(1)
 
 //Cambiamos la columna y por una con datos binarios.
 val change1 = df.withColumn("y",when(col("y").equalTo("yes"),1).otherwise(col("y")))
 val change2 = change1.withColumn("y",when(col("y").equalTo("no"),2).otherwise(col("y")))
 val newcolumn = change2.withColumn("y",'y.cast("Int"))
 //Desplegamos la nueva columna
-newcolumn.show()
+newcolumn.show(1)
 
 //Generamos la tabla features
 val assembler = new VectorAssembler().setInputCols(Array("balance","day","duration","pdays","previous")).setOutputCol("features")
 val fea = assembler.transform(newcolumn)
 //Mostramos la nueva columna
-fea.show()
+fea.show(1)
 
 //Cambiamos la columna y a la columna label
 val cambio = fea.withColumnRenamed("y", "label")
 val feat = cambio.select("label","features")
-feat.show()
+feat.show(1)
 
 //DecisionTree
 val labelIndexer = new StringIndexer().setInputCol("label").setOutputCol("indexedLabel").fit(feat)
@@ -71,3 +71,4 @@ println(s"Test Error = ${(1.0 - accuracy)}")
 
 val treeModel = model.stages(2).asInstanceOf[DecisionTreeClassificationModel]
 println(s"Learned classification tree model:\n ${treeModel.toDebugString}")
+
